@@ -2,9 +2,24 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 from django.db import transaction
+from django.template.loader import render_to_string
 
 from .models import Clock, ClockLog
 from .forms import ResetClockForm, NewClockForm
+
+
+def dashboard_clocks(request):
+    clocks = (
+        Clock.objects
+        .filter(is_active=True)
+        .select_related('last_reset_by__profile__main_character')
+    )
+
+    context = {
+        'clocks': clocks,
+    }
+
+    return render_to_string('clockboard/dashboard_panel.html', context=context, request=request)
 
 
 @login_required

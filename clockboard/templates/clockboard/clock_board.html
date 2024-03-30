@@ -1,0 +1,51 @@
+{% extends "clockboard/base.html" %}
+{% load static %}
+{% load evelinks %}
+
+{% block clockboardcontent %}
+    <h1 class="page-header text-center">Clock Board</h1>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mt-3">
+        {% for clock in clocks %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header text-center">{{ clock.name }}</div>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            <i class="fa-regular fa-clock"></i>
+                            <span class="ms-3" id="clock{{ clock.pk }}"></span>
+                        </h4>
+                        <p class="card-text mt-3">
+                            <img src="{{ clock.last_reset_by.profile.main_character|character_portrait_url:32 }}" class="rounded me-2">
+                            {{ clock.last_reset_by.profile.main_character.character_name }}
+                        </p>
+                        <div class="d-flex justify-content-center">
+                            <a href="{% url "clockboard:reset_clock" clock.pk %}" class="btn btn-primary">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock clockboardcontent %}
+
+{% block extra_javascript %}
+    {% include 'bundles/moment-js.html'%}
+    {% include 'bundles/timers-js.html' %}
+    <script type="application/javascript">
+        var clocks = [
+            {% for clock in clocks %}
+                {
+                    id: "{{ clock.pk }}",
+                    last_reset: moment("{{ clock.last_reset|date:'c' }}"),
+                },
+            {% endfor %}
+        ];
+    </script>
+    <script src="{% static "clockboard/js/clocks.js" %}"></script>
+    <script type="application/javascript">
+        $(document).ready(function() {
+            updateAllClocks();
+            setInterval(updateAllClocks, 1000);
+        });
+    </script>
+{% endblock extra_javascript %}

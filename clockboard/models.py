@@ -16,6 +16,7 @@ class Clock(models.Model):
     name = models.CharField(max_length=255)
     last_reset = models.DateTimeField(default=timezone.now)
     last_reset_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='+')
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         default_permissions = ()

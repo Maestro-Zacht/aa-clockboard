@@ -7,6 +7,7 @@ app_name = 'clockboard'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('board/', views.dashboard, name='dashboard'),
-    path('reset/<int:clock_id>/', views.reset_clock, name='reset_clock'),
+    path('clocks/', views.dashboard, name='dashboard'),
+    path('clocks/<int:clock_id>/reset/', views.reset_clock, name='reset_clock'),
+    path('clocks/new/', views.new_clock, name='new_clock'),
 ]

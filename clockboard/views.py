@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.db import transaction
 
 from .models import Clock, ClockLog
-from .forms import ResetClockForm
+from .forms import ResetClockForm, NewClockForm
 
 
 @login_required
@@ -56,7 +56,27 @@ def reset_clock(request, clock_id: int):
 
     context = {
         'form': form,
-        'clock': clock,
     }
 
     return render(request, 'clockboard/reset_clock.html', context=context)
+
+
+@login_required
+@permission_required('clockboard.can_add_clocks')
+def new_clock(request):
+    if request.method == 'POST':
+        form = NewClockForm(request.POST)
+        if form.is_valid():
+            clock = form.save(commit=False)
+            clock.last_reset_by = request.user
+            clock.save()
+
+            return redirect('clockboard:dashboard')
+    else:
+        form = NewClockForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'clockboard/new_clock.html', context=context)

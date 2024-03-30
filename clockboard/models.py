@@ -9,11 +9,12 @@ class General(models.Model):
         default_permissions = ()
         permissions = (
             ('can_see_clocks', "Can see clocks"),
+            ('can_add_clocks', "Can add clocks"),
         )
 
 
 class Clock(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     last_reset = models.DateTimeField(default=timezone.now)
     last_reset_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='+')
     is_active = models.BooleanField(default=True)
